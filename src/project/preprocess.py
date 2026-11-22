@@ -18,7 +18,7 @@ def load_rgb(path: str | Path) -> np.ndarray:
     """Load any image as uint8 RGB (RGBA/palette/grayscale are converted)."""
     path = Path(path)
     if not path.is_absolute():
-        path = config.ROOT / path
+        path = config.RAW_DIR / path  # index paths are relative to RAW_DIR
     with Image.open(path) as im:
         return np.asarray(im.convert("RGB"))
 

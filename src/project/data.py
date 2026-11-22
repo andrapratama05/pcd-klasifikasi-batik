@@ -49,7 +49,7 @@ def extract_dataset(zip_path: Path | None = None, out_dir: Path = config.RAW_DIR
     """
     out_dir = Path(out_dir)
     if out_dir.exists() and any(p.suffix.lower() in IMAGE_EXTS for p in out_dir.rglob("*")):
-        print(f"Dataset already extracted in {out_dir.relative_to(config.ROOT)}")
+        print(f"Dataset already extracted in {out_dir}")
         return out_dir
 
     if zip_path is None:
@@ -66,7 +66,7 @@ def extract_dataset(zip_path: Path | None = None, out_dir: Path = config.RAW_DIR
             if info.filename.lower().endswith(".zip"):
                 with zipfile.ZipFile(io.BytesIO(outer.read(info))) as inner:
                     n += _extract_images(inner, out_dir)
-    print(f"Extracted {n} images to {out_dir.relative_to(config.ROOT)}")
+    print(f"Extracted {n} images to {out_dir}")
     return out_dir
 
 
@@ -79,13 +79,14 @@ def normalize_label(folder_name: str) -> str:
 
 def build_index(raw_dir: Path = config.RAW_DIR, classes: list[str] | None = None) -> pd.DataFrame:
     """List every image with its label (taken from the parent folder name)."""
+    raw_dir = Path(raw_dir)
     rows = []
-    for p in sorted(Path(raw_dir).rglob("*")):
+    for p in sorted(raw_dir.rglob("*")):
         if p.suffix.lower() not in IMAGE_EXTS:
             continue
         rows.append(
             {
-                "filepath": p.relative_to(config.ROOT).as_posix(),
+                "filepath": p.relative_to(raw_dir).as_posix(),  # relative to RAW_DIR
                 "filename": p.name,
                 "folder": p.parent.name,
                 "label": normalize_label(p.parent.name),
@@ -103,7 +104,7 @@ def audit_images(df: pd.DataFrame) -> pd.DataFrame:
     for fp in tqdm(df["filepath"], desc="Audit"):
         rec = {"filepath": fp, "ok": True, "width": None, "height": None, "mode": None, "error": ""}
         try:
-            with Image.open(config.ROOT / fp) as im:
+            with Image.open(config.RAW_DIR / fp) as im:
                 rec["mode"] = im.mode
                 rec["width"], rec["height"] = im.size
                 im.load()  # forces full decode, catches truncated files

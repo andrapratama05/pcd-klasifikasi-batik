@@ -3,6 +3,7 @@
 All paths are relative to the repository root so the project runs on any machine.
 """
 
+import os
 from pathlib import Path
 
 import numpy as np
@@ -11,7 +12,9 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 DATASET_ZIP_DIR = ROOT / "dataset"  # original ZIP downloaded from Mendeley (untouched)
 DATA_DIR = ROOT / "data"
-RAW_DIR = DATA_DIR / "raw"  # extracted images: data/raw/<Class>/<file>.jpg
+# Extracted images: <RAW_DIR>/<Class>/<file>.jpg. Override with BATIK_RAW_DIR, e.g. on
+# Colab to keep 2k+ small files on fast local disk instead of Google Drive.
+RAW_DIR = Path(os.environ.get("BATIK_RAW_DIR", DATA_DIR / "raw"))
 FEATURES_DIR = ROOT / "features"
 RESULTS_DIR = ROOT / "results"
 FIGURES_DIR = ROOT / "figures"

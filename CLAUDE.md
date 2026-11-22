@@ -119,7 +119,7 @@ Logika yang dipakai ulang ditaruh di `src/`, notebook mengimpor dari sana. Noteb
 ## Environment
 
 - Python ≥ 3.10. Library: `numpy`, `pandas`, `scikit-image`, `scikit-learn`, `matplotlib`, `pillow`, `tqdm`, `jupyter`. Hindari dependensi lain kecuali benar-benar perlu.
-- Dijalankan **lokal** (laptop, VS Code + Jupyter). Buat virtual environment `.venv` dan pastikan komputasi tetap ringan: 1.820 citra 224×224 seharusnya cukup tanpa GPU. Pakai `n_jobs=-1` di GridSearchCV dan cache fitur supaya tidak dihitung ulang.
+- Dijalankan di **Google Colab** (folder project diunggah ke Google Drive, tanpa GitHub). Tiap notebook diawali sel setup yang me-mount Drive, `chdir` ke `PROJECT_DIR`, dan menambahkan `src/` ke `sys.path` (tanpa `pip install`). Di Colab, citra diekstrak ke disk lokal `/content/data/raw` lewat env var `BATIK_RAW_DIR` (membaca ribuan file dari Drive lambat); `results/` dan `figures/` tetap di Drive. Path di indeks citra relatif terhadap `config.RAW_DIR`. Lokal tetap bisa dipakai lewat uv (`.venv`, Python 3.13). Pastikan komputasi tetap ringan: 1.820 citra 224×224 seharusnya cukup tanpa GPU. Pakai `n_jobs=-1` di GridSearchCV dan cache fitur supaya tidak dihitung ulang.
 - Semua path relatif terhadap root repo (lewat `src/config.py`), tidak ada path absolut.
 - Seed global `42` untuk semua hal yang acak.
 
