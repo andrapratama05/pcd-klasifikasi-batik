@@ -1,33 +1,20 @@
 [project]
-name = "project"
+name = "batik-banyumasan-glcm-lbp-svm"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
-authors = [
-    { name = "Andra Pratama", email = "andrapratama050205@gmail.com" }
-]
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 dependencies = [
-    "matplotlib>=3.11.2",
-    "numpy>=2.5.5",
-    "pandas>=3.1.1",
-    "pillow>=13.0.0",
-    "scikit-image>=0.26.0",
-    "scikit-learn>=1.9.1",
+    "matplotlib>=3.10.9",
+    "numpy>=2.2.6",
+    "pandas>=2.3.3",
+    "pillow>=12.3.0",
+    "scikit-image>=0.25.2",
+    "scikit-learn>=1.7.2",
     "tqdm>=4.70.1",
 ]
 
-[project.scripts]
-project = "project:main"
-
-[build-system]
-requires = ["uv_build>=0.13.1,<0.14.0"]
-build-backend = "uv_build"
-
 [dependency-groups]
 dev = [
-    "ipykernel>=7.4.0",
+    "ipykernel>=7.3.0",
     "jupyter>=1.1.1",
-    "nbconvert>=7.17.2",
     "pytest>=9.2.0",
 ]

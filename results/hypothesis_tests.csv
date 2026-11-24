@@ -1,0 +1,11 @@
+hipotesis,A,B,F1 CV A,F1 CV B,selisih CV,status (CV),F1 uji A,F1 uji B,selisih uji
+H1,S4 linear,S2 linear,0.950 ± 0.013,0.980 ± 0.011,-0.03,tidak didukung,0.961,1.0,-0.039
+H1,S4 linear,S3 rbf,0.950 ± 0.013,0.938 ± 0.033,0.012,tidak meyakinkan,0.961,0.953,0.008
+H2,S1 rbf,S1 linear,0.954 ± 0.007,0.927 ± 0.016,0.026,didukung,0.965,0.923,0.042
+H2,S2 poly,S2 linear,0.974 ± 0.018,0.980 ± 0.011,-0.006,tidak meyakinkan,1.0,1.0,0.0
+H2,S3 rbf,S3 linear,0.938 ± 0.033,0.916 ± 0.004,0.023,tidak meyakinkan,0.953,0.916,0.037
+H2,S4 rbf,S4 linear,0.949 ± 0.024,0.950 ± 0.013,-0.001,tidak meyakinkan,0.982,0.961,0.02
+H3,S2 linear,S1 rbf,0.980 ± 0.011,0.954 ± 0.007,0.026,didukung,1.0,0.965,0.035
+H3 (per kernel),S2 linear,S1 linear,0.980 ± 0.011,0.927 ± 0.016,0.053,didukung,1.0,0.923,0.077
+H3 (per kernel),S2 rbf,S1 rbf,0.973 ± 0.027,0.954 ± 0.007,0.02,tidak meyakinkan,1.0,0.965,0.035
+H3 (per kernel),S2 poly,S1 poly,0.974 ± 0.018,0.930 ± 0.034,0.044,didukung,1.0,0.983,0.017
