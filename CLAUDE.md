@@ -151,7 +151,8 @@ pattern = r"^(?P<motif>.+?) \((?P<idx>\d+)\)(?:_(?P<aug>\w+))?\.jpg$"  # case-in
 ├── .gitignore              # data/, features/, .venv/, __pycache__/, .ipynb_checkpoints/
 ├── data/                   # tidak di-commit
 │   ├── zip/                # ZIP unduhan (disimpan supaya tidak mengunduh ulang)
-│   └── raw/batik_banyumasan/<Motif>/
+│   ├── raw/batik_banyumasan/<Motif>/
+│   └── demo/               # foto baru untuk uji coba (hanya README yang di-commit)
 ├── src/
 │   ├── __init__.py
 │   ├── config.py           # path, seed, DATASET_URL, CLASSES, IMG_SIZE, levels, distances, angles, P, R, grid
@@ -159,17 +160,21 @@ pattern = r"^(?P<motif>.+?) \((?P<idx>\d+)\)(?:_(?P<aug>\w+))?\.jpg$"  # case-in
 │   ├── data.py             # parse_filename(), audit, make_split()
 │   ├── preprocess.py
 │   ├── features.py         # glcm_features(), lbp_features()
-│   └── evaluate.py         # metrik, confusion matrix
+│   ├── evaluate.py         # metrik, confusion matrix
+│   └── predict.py          # predict_image() + CLI, memakai models/best_model.*
 ├── notebooks/
 │   ├── 01_dataset_dan_eda.ipynb
 │   ├── 02_preprocessing_dan_split.ipynb
 │   ├── 03_skenario_dan_training.ipynb
 │   ├── 04_evaluasi_dan_hipotesis.ipynb
-│   └── 05_ablasi_augmentasi.ipynb      # tambahan
+│   ├── 05_ablasi_augmentasi.ipynb      # tambahan
+│   └── 06_demo_klasifikasi.ipynb       # uji coba model terbaik
 ├── tests/
 │   ├── test_features.py
-│   └── test_data.py
+│   ├── test_data.py
+│   └── test_predict.py
 ├── features/               # cache fitur, tidak di-commit
+├── models/                 # best_model.joblib + best_model.json (dari notebook 04)
 ├── results/
 └── figures/
 ```
@@ -231,6 +236,7 @@ Ditulis dalam Bahasa Indonesia baku, untuk dosen, anggota kelompok, dan orang ya
 ## Status dan yang masih perlu diisi
 
 - Tahap sekarang: **notebook 01–05 selesai dan dijalankan (24-11-2026); rangkuman di `results/ringkasan_hasil.md`.** Berikutnya: keputusan soal batasan "kain yang sama" (lihat di bawah).
+- Tahap uji coba klasifikasi (25-11-2026): notebook 04 menyimpan model terbaik menurut CV (S2 + SVM linear, C=100) **tanpa training ulang** ke `models/best_model.joblib` + `models/best_model.json` (skenario, kernel, params, urutan `feature_columns`, `IMG_SIZE`, kelas, versi scikit-learn), serta prediksi 12 model di data uji ke `results/test_predictions.csv`. `src/predict.py` berisi `predict_image(path)` (preprocessing + fitur yang sama persis, label + top-3 dari `decision_function`) dan CLI `uv run python -m src.predict <file|folder>`. Notebook `06_demo_klasifikasi.ipynb` mendemokan beberapa citra uji dan foto baru di `data/demo/` (foto tidak di-commit, hanya README-nya). `tests/test_predict.py` memastikan `predict_image` menghasilkan label yang sama dengan prediksi notebook 04 untuk ke-115 citra uji (di-skip bila data/model belum ada).
 - Temuan validitas (notebook 04, bagian 5): foto uji hampir selalu punya foto latih dari kain fisik yang sama (tetangga terdekat selalu berlabel sama; selisih nomor foto bermedian 2). Split per foto asli mencegah kebocoran augmentasi, tetapi tidak mencegah kebocoran kain. Belum ada keputusan untuk mengubah desain.
 - [ ] Konfirmasi ke dosen: Opsi A (foto asli saja) sebagai eksperimen utama, Opsi B sebagai ablasi
 - [x] Ukuran citra asli: semua 5.148 citra 512×512 RGB (audit notebook 01). `IMG_SIZE` final = **256** (dikonfirmasi 24-11-2026: tanpa upscaling, jarak GLCM d = 1, 3, 5 menangkap pola motif alih-alih serat kain/noise, piksel 4× lebih sedikit; rincian di `note.md` lokal, tidak di-commit)

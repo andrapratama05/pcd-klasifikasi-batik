@@ -1,4 +1,7 @@
-data/
+data/*
+!data/demo/
+data/demo/*
+!data/demo/README.md
 features/
 .venv/
 __pycache__/
@@ -6,3 +9,5 @@ __pycache__/
 .pytest_cache/
 *.pyc
 note.md
+# hasil demo foto pribadi di data/demo/ tidak di-commit
+figures/06_demo/demo_foto_baru.png

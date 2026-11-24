@@ -47,11 +47,12 @@ Data tidak disimpan di repositori. Gunakan skrip pengunduh di bawah.
 ## Struktur repo
 
 ```
-data/          dataset (tidak di-commit): data/zip/ untuk ZIP, data/raw/ untuk hasil ekstraksi
-src/           kode yang dipakai ulang: konfigurasi, pengunduh data, split, preprocessing, fitur, evaluasi
-notebooks/     alur eksperimen 01–05, dijalankan berurutan
-tests/         uji kebenaran (pytest) untuk parsing data, split, dan fitur
+data/          dataset (tidak di-commit): data/zip/ untuk ZIP, data/raw/ untuk hasil ekstraksi, data/demo/ untuk foto baru
+src/           kode yang dipakai ulang: konfigurasi, pengunduh data, split, preprocessing, fitur, evaluasi, prediksi
+notebooks/     alur eksperimen 01–05 dan demo klasifikasi 06, dijalankan berurutan
+tests/         uji kebenaran (pytest) untuk parsing data, split, fitur, dan prediksi
 features/      cache fitur hasil ekstraksi (tidak di-commit)
+models/        model terbaik (best_model.joblib) dan metadatanya (best_model.json), dibuat notebook 04
 results/       tabel hasil (split, cross-validation, data uji, ablasi)
 figures/       gambar untuk laporan dan slide, per notebook
 ```
@@ -109,6 +110,7 @@ atau buka folder ini di VS Code dan pilih kernel dari `.venv`. Jalankan notebook
 3. `03_skenario_dan_training.ipynb`
 4. `04_evaluasi_dan_hipotesis.ipynb`
 5. `05_ablasi_augmentasi.ipynb` (tambahan)
+6. `06_demo_klasifikasi.ipynb` (uji coba model terbaik pada citra satuan)
 
 Untuk menjalankan ulang semua notebook sekaligus dari kernel bersih:
 
@@ -125,8 +127,33 @@ uv run jupyter nbconvert --to notebook --execute --inplace notebooks/*.ipynb
 | 03 Skenario dan training | ± 40 detik (termasuk ekstraksi fitur 4.113 citra; lebih cepat bila cache `features/` sudah ada) |
 | 04 Evaluasi dan hipotesis | ± 10 detik |
 | 05 Ablasi augmentasi | ± 50 detik |
+| 06 Demo klasifikasi | ± 10 detik |
 
-Diukur pada 24-11-2026 di laptop tanpa GPU (eksekusi ulang semua notebook dari kernel bersih).
+Diukur pada 24/25-11-2026 di laptop tanpa GPU (eksekusi ulang semua notebook dari kernel bersih).
+
+### 6. Uji coba klasifikasi (model terbaik)
+
+Notebook 04 menyimpan model terbaik menurut validasi silang (saat ini S2 GLCM 4 arah + SVM linear) ke `models/best_model.joblib`, beserta metadata di `models/best_model.json` (skenario, kernel, parameter, urutan fitur, `IMG_SIZE`, kelas, versi scikit-learn). Model ini adalah model yang sama dengan yang dievaluasi di notebook 04, tanpa training ulang.
+
+Klasifikasikan satu citra atau seluruh isi folder dari terminal:
+
+```bash
+uv run python -m src.predict "data/raw/batik_banyumasan/Puger Galar/Puger Galar (20).jpg"
+uv run python -m src.predict data/demo/
+```
+
+Keluarannya berupa label dan 3 kandidat teratas beserta skor `decision_function` SVM. Skor ini untuk mengurutkan kandidat, bukan probabilitas.
+
+Untuk mencoba foto sendiri, letakkan fotonya di `data/demo/` (tidak harus persegi), lalu jalankan perintah di atas atau notebook `06_demo_klasifikasi.ipynb`. Preprocessing dan ekstraksi fitur yang dipakai sama persis dengan saat training. Catatan: model dilatih dari kain-kain di satu rumah batik, jadi foto dari kain atau kondisi pemotretan lain bisa diklasifikasikan lebih buruk daripada angka di data uji.
+
+Dari Python:
+
+```python
+from src.predict import predict_image
+predict_image("data/demo/foto_saya.jpg")   # {'label': ..., 'top': [(label, skor), ...]}
+```
+
+Kalau versi scikit-learn berbeda dengan yang tercatat di metadata, akan muncul peringatan; jalankan ulang notebook 04 untuk membuat ulang model.
 
 ## Hasil
 

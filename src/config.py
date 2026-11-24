@@ -15,6 +15,8 @@ RAW_DIR = DATA_DIR / "raw" / "batik_banyumasan"
 FEATURES_DIR = ROOT / "features"
 RESULTS_DIR = ROOT / "results"
 FIGURES_DIR = ROOT / "figures"
+MODELS_DIR = ROOT / "models"
+DEMO_DIR = DATA_DIR / "demo"  # put new photos here for notebook 06 / src.predict
 
 # --- Reproducibility -----------------------------------------------------
 SEED = 42
