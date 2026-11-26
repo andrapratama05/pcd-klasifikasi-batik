@@ -168,7 +168,8 @@ pattern = r"^(?P<motif>.+?) \((?P<idx>\d+)\)(?:_(?P<aug>\w+))?\.jpg$"  # case-in
 │   ├── 03_skenario_dan_training.ipynb
 │   ├── 04_evaluasi_dan_hipotesis.ipynb
 │   ├── 05_ablasi_augmentasi.ipynb      # tambahan
-│   └── 06_demo_klasifikasi.ipynb       # uji coba model terbaik
+│   ├── 06_demo_klasifikasi.ipynb       # uji coba model terbaik
+│   └── 07_diagnostik_model.ipynb       # learning/validation curve, kebocoran data
 ├── tests/
 │   ├── test_features.py
 │   ├── test_data.py
@@ -237,6 +238,7 @@ Ditulis dalam Bahasa Indonesia baku, untuk dosen, anggota kelompok, dan orang ya
 
 - Tahap sekarang: **notebook 01–05 selesai dan dijalankan (24-11-2026); rangkuman di `results/ringkasan_hasil.md`.** Berikutnya: keputusan soal batasan "kain yang sama" (lihat di bawah).
 - Tahap uji coba klasifikasi (25-11-2026): notebook 04 menyimpan model terbaik menurut CV (S2 + SVM linear, C=100) **tanpa training ulang** ke `models/best_model.joblib` + `models/best_model.json` (skenario, kernel, params, urutan `feature_columns`, `IMG_SIZE`, kelas, versi scikit-learn), serta prediksi 12 model di data uji ke `results/test_predictions.csv`. `src/predict.py` berisi `predict_image(path)` (preprocessing + fitur yang sama persis, label + top-3 dari `decision_function`) dan CLI `uv run python -m src.predict <file|folder>`. Notebook `06_demo_klasifikasi.ipynb` mendemokan beberapa citra uji dan foto baru di `data/demo/` (foto tidak di-commit, hanya README-nya). `tests/test_predict.py` memastikan `predict_image` menghasilkan label yang sama dengan prediksi notebook 04 untuk ke-115 citra uji (di-skip bila data/model belum ada).
+- Diagnostik model (notebook 07, 26-11-2026; hanya data latih): tidak underfitting; overfitting ringan (F1 latih ≈ 1 vs validasi 0,94–0,98), hyperparameter terpilih di luar daerah overfitting; learning curve belum mendatar. Permutation test (100×): F1 label acak ±0,08, p = 0,01 → pipeline tidak bocor. Dataset punya 5 pasangan foto asli identik (Lumbon 17=25, 18=26, 19=27, 24=28; Madu Bronto 41=42), semua di data latih; efek ke CV −0,009 s.d. +0,001. CV per blok nomor foto (1–13, 14–26, 27–39, 40–52) menurunkan F1 0,13–0,19 (S2 0,821 ± 0,102; S4 0,824 ± 0,074), mengonfirmasi kebocoran kain. Ringkasan di `results/diagnostik_model.csv`.
 - Temuan validitas (notebook 04, bagian 5): foto uji hampir selalu punya foto latih dari kain fisik yang sama (tetangga terdekat selalu berlabel sama; selisih nomor foto bermedian 2). Split per foto asli mencegah kebocoran augmentasi, tetapi tidak mencegah kebocoran kain. Belum ada keputusan untuk mengubah desain.
 - [ ] Konfirmasi ke dosen: Opsi A (foto asli saja) sebagai eksperimen utama, Opsi B sebagai ablasi
 - [x] Ukuran citra asli: semua 5.148 citra 512×512 RGB (audit notebook 01). `IMG_SIZE` final = **256** (dikonfirmasi 24-11-2026: tanpa upscaling, jarak GLCM d = 1, 3, 5 menangkap pola motif alih-alih serat kain/noise, piksel 4× lebih sedikit; rincian di `note.md` lokal, tidak di-commit)

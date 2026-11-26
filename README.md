@@ -49,7 +49,7 @@ Data tidak disimpan di repositori. Gunakan skrip pengunduh di bawah.
 ```
 data/          dataset (tidak di-commit): data/zip/ untuk ZIP, data/raw/ untuk hasil ekstraksi, data/demo/ untuk foto baru
 src/           kode yang dipakai ulang: konfigurasi, pengunduh data, split, preprocessing, fitur, evaluasi, prediksi
-notebooks/     alur eksperimen 01–05 dan demo klasifikasi 06, dijalankan berurutan
+notebooks/     alur eksperimen 01–05, demo klasifikasi 06, dan diagnostik model 07, dijalankan berurutan
 tests/         uji kebenaran (pytest) untuk parsing data, split, fitur, dan prediksi
 features/      cache fitur hasil ekstraksi (tidak di-commit)
 models/        model terbaik (best_model.joblib) dan metadatanya (best_model.json), dibuat notebook 04
@@ -111,6 +111,7 @@ atau buka folder ini di VS Code dan pilih kernel dari `.venv`. Jalankan notebook
 4. `04_evaluasi_dan_hipotesis.ipynb`
 5. `05_ablasi_augmentasi.ipynb` (tambahan)
 6. `06_demo_klasifikasi.ipynb` (uji coba model terbaik pada citra satuan)
+7. `07_diagnostik_model.ipynb` (learning/validation curve, overfitting/underfitting, dan pemeriksaan kebocoran data)
 
 Untuk menjalankan ulang semua notebook sekaligus dari kernel bersih:
 
@@ -128,6 +129,7 @@ uv run jupyter nbconvert --to notebook --execute --inplace notebooks/*.ipynb
 | 04 Evaluasi dan hipotesis | ± 10 detik |
 | 05 Ablasi augmentasi | ± 50 detik |
 | 06 Demo klasifikasi | ± 10 detik |
+| 07 Diagnostik model | ± 70 detik |
 
 Diukur pada 24/25-11-2026 di laptop tanpa GPU (eksekusi ulang semua notebook dari kernel bersih).
 
@@ -185,6 +187,8 @@ Ringkasan hipotesis (status dari validasi silang; selisih < std ditulis *tidak m
 **Batasan penting.** Foto uji hampir selalu punya foto latih dari kain fisik yang sama (difoto berurutan; lihat `figures/04_evaluasi/foto_uji_vs_latih_terdekat.png`). Split per foto asli mencegah kebocoran augmentasi, tetapi tidak mencegah kebocoran kain. Akibatnya, angka absolut di atas mengukur kemampuan mengenali kain-kain di dataset ini, bukan generalisasi ke kain baru. Perbandingan antar-skenario tetap adil karena semua skenario terkena batasan yang sama.
 
 Ablasi augmentasi (Opsi B, notebook 05, `results/ablation_aug.csv`): menambahkan 8 augmentasi bawaan ke data latih menaikkan F1 CV secara meyakinkan pada 9 dari 12 model, terutama LBP (S3, +0,049 sampai +0,060). GLCM 4 arah (S2) hampir tidak diuntungkan karena rotasi dan pencerminan tidak mengubah fiturnya.
+
+Diagnostik model (notebook 07, `results/diagnostik_model.csv`): tidak ada underfitting; overfitting ringan dan wajar (F1 latih ≈ 1, validasi 0,94–0,98) dengan hyperparameter terpilih di luar daerah overfitting; permutation test menunjukkan pipeline tidak bocor (F1 dengan label acak ±0,08). Namun validasi silang per blok nomor foto menurunkan F1 0,13–0,19 (S2: 0,821 ± 0,102), yang menegaskan kebocoran "kain yang sama". Dataset juga berisi 5 pasangan foto asli identik (semuanya di data latih; dampaknya pada CV dapat diabaikan).
 
 Rangkuman lengkap hasil dan kesimpulan: [`results/ringkasan_hasil.md`](results/ringkasan_hasil.md).
 
